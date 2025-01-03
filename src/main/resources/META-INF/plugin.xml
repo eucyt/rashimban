@@ -5,4 +5,8 @@
     <vendor>eucyt</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow factoryClass="com.github.eucyt.rashimban.toolWindow.RashimbanToolWindowFactory" id="Rashimban"/>
+    </extensions>
 </idea-plugin>
