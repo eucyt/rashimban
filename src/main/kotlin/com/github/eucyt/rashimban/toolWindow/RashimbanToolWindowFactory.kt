@@ -10,7 +10,7 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.ui.content.ContentFactory
 
-class  RashimbanToolWindowFactory : ToolWindowFactory {
+class RashimbanToolWindowFactory : ToolWindowFactory {
     override fun createToolWindowContent(
         project: Project,
         toolWindow: ToolWindow,
