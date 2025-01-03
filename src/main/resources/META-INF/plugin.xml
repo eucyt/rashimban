@@ -6,13 +6,7 @@
 
     <depends>com.intellij.modules.platform</depends>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
-
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.eucyt.rashimban.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+        <toolWindow factoryClass="com.github.eucyt.rashimban.toolWindow.RashimbanToolWindowFactory" id="Rashimban"/>
     </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.eucyt.rashimban.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
 </idea-plugin>
