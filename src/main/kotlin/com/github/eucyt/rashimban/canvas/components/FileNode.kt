@@ -9,8 +9,8 @@ private const val PADDING = 5
 
 class FileNode(
     val virtualFile: VirtualFile,
-    var x: Int,
-    var y: Int,
+    var centerX: Int,
+    var centerY: Int,
 ) {
     val nodeId: UUID = UUID.randomUUID()
     var width: Int = 0
@@ -24,6 +24,8 @@ class FileNode(
         val text = virtualFile.name
         width = fm.stringWidth(text) + (PADDING * 2)
         height = fm.height + (PADDING * 2)
+        val x = centerX - (width / 2)
+        val y = centerY - (height / 2)
 
         val isCurrentFile = currentFile?.path == virtualFile.path
 
@@ -38,5 +40,7 @@ class FileNode(
     fun contains(
         xx: Int,
         yy: Int,
-    ): Boolean = (x <= xx && xx <= x + width) && (y <= yy && yy <= y + height)
+    ): Boolean =
+        (centerX - (width / 2) <= xx && xx <= centerX + (width / 2)) &&
+            (centerY - (height / 2) <= yy && yy <= centerY + (height / 2))
 }
