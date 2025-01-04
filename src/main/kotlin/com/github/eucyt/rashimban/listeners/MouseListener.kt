@@ -33,8 +33,8 @@ class MouseListener(
             lastMousePosition?.let { lastPos ->
                 val dx = e.x - lastPos.x
                 val dy = e.y - lastPos.y
-                node.x += dx
-                node.y += dy
+                node.centerX += dx
+                node.centerY += dy
                 lastMousePosition = e.point
                 repaint()
             }
