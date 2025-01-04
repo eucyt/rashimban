@@ -11,7 +11,7 @@ private const val INITIAL_Y = 100
 private const val RANDOM_RANGE_X = 30
 private const val RANDOM_RANGE_Y = 30
 
-class FileNodeManager : RashimbanCanvasComponentManager {
+class FileNodeManager {
     private val fileNodes: MutableList<FileNode> = mutableListOf()
     private val edges: MutableMap<UUID, MutableSet<UUID>> = mutableMapOf()
 
@@ -22,15 +22,19 @@ class FileNodeManager : RashimbanCanvasComponentManager {
         edges.computeIfAbsent(add(from).nodeId) { mutableSetOf() }.add(add(to).nodeId)
     }
 
-    override fun remove(uuid: UUID) {
+    fun remove(uuid: UUID) {
         fileNodes.removeIf { it.nodeId == uuid }
         edges.remove(uuid)
         edges.forEach { it.value.remove(uuid) }
     }
 
-    override fun contains(point: Point) = fileNodes.find { it.contains(point.x, point.y) }
+    // Latest node is at the top
+    fun contains(point: Point) = fileNodes.reversed().find { it.contains(point.x, point.y) }
 
-    override fun draw(g: Graphics2D) {
+    fun draw(
+        g: Graphics2D,
+        currentFile: VirtualFile?,
+    ) {
         g.color = Color.LIGHT_GRAY
         edges.forEach { (fromNodeId, toSet) ->
             run {
@@ -46,7 +50,7 @@ class FileNodeManager : RashimbanCanvasComponentManager {
                 }
             }
         }
-        fileNodes.map { it.draw(g) }
+        fileNodes.map { it.draw(g, currentFile) }
     }
 
     private fun add(virtualFile: VirtualFile): FileNode =

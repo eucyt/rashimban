@@ -17,7 +17,7 @@ class RashimbanToolWindowFactory : ToolWindowFactory {
         toolWindow: ToolWindow,
     ) {
         val fileNodeManager = FileNodeManager()
-        val canvas = RashimbanCanvas(fileNodeManager)
+        val canvas = RashimbanCanvas(project, fileNodeManager)
 
         val mouseListener = MouseListener(project, fileNodeManager) { canvas.repaint() }
         canvas.addMouseListener(mouseListener)
