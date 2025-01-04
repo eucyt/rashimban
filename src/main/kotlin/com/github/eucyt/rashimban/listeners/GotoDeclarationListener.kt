@@ -27,13 +27,14 @@ class GotoDeclarationListener(
         action: AnAction,
         event: AnActionEvent,
     ) {
+        super.beforeActionPerformed(action, event)
+
         isJumping = false
         if (action !is GotoDeclarationAction) return
 
         isJumping = true
         latestSourceFile = event.getData(CommonDataKeys.VIRTUAL_FILE)
         latestGotoDeclarationActionAt = System.currentTimeMillis()
-        println("beforeActionPerformed: $latestSourceFile")
     }
 
     override fun afterActionPerformed(
@@ -41,10 +42,11 @@ class GotoDeclarationListener(
         event: AnActionEvent,
         result: AnActionResult,
     ) {
+        super.afterActionPerformed(action, event, result)
+
         if (action !is GotoDeclarationAction) return
 
         val targetFile = event.getData(CommonDataKeys.PSI_ELEMENT)?.containingFile?.virtualFile ?: return
-        println("afterActionPerformed: $targetFile")
 
         // It cannot distinguish whether the jump occurred within the same file
         // or if there were multiple declarations or usages, making it unable to correctly identify the targetFile.
@@ -58,6 +60,8 @@ class GotoDeclarationListener(
     // If there are multiple declarations or usages, the targetFile cannot be obtained
     // at the point of GotoDeclarationAction. Therefore, it is necessary to retrieve the file opened after the action.
     override fun selectionChanged(event: FileEditorManagerEvent) {
+        super.selectionChanged(event)
+
         if (!isJumping) return
         val newFile = event.newFile ?: return
 
