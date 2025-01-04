@@ -11,20 +11,26 @@ class FileNode(
     val virtualFile: VirtualFile,
     var x: Int,
     var y: Int,
-) : RashimbanCanvasComponent {
+) {
     val nodeId: UUID = UUID.randomUUID()
     var width: Int = 0
     var height: Int = 0
 
-    override fun draw(g: Graphics2D) {
+    fun draw(
+        g: Graphics2D,
+        currentFile: VirtualFile?,
+    ) {
         val fm = g.fontMetrics
         val text = virtualFile.name
         width = fm.stringWidth(text) + (PADDING * 2)
         height = fm.height + (PADDING * 2)
 
+        val isCurrentFile = currentFile?.path == virtualFile.path
+
         g.color = Color.DARK_GRAY
         g.fillRoundRect(x, y, width, height, PADDING, PADDING)
-        g.color = Color.LIGHT_GRAY
+
+        g.color = if (isCurrentFile) Color.GRAY else Color.LIGHT_GRAY
         g.drawRoundRect(x, y, width, height, PADDING, PADDING)
         g.drawString(text, x + PADDING, y + fm.ascent + PADDING)
     }
