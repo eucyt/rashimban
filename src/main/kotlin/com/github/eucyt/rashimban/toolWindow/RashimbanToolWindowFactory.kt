@@ -5,6 +5,7 @@ import com.github.eucyt.rashimban.canvas.components.FileNodeManager
 import com.github.eucyt.rashimban.listeners.GotoDeclarationListener
 import com.github.eucyt.rashimban.listeners.MouseListener
 import com.intellij.openapi.actionSystem.ex.AnActionListener
+import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
@@ -24,7 +25,9 @@ class RashimbanToolWindowFactory : ToolWindowFactory {
 
         // Add node by code jump
         val connection = project.messageBus.connect()
-        connection.subscribe(AnActionListener.TOPIC, GotoDeclarationListener(fileNodeManager) { canvas.repaint() })
+        val gotoDeclarationListener = GotoDeclarationListener(fileNodeManager) { canvas.repaint() }
+        connection.subscribe(AnActionListener.TOPIC, gotoDeclarationListener)
+        connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, gotoDeclarationListener)
 
         val content = ContentFactory.getInstance().createContent(canvas, null, false)
         toolWindow.contentManager.addContent(content)
