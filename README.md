@@ -8,6 +8,7 @@
 
 <!-- Plugin description -->
 This plugin visualizes your navigation between files when jumping through code.
+
 With this tool, you can easily track which file you came from and where you are now, even in projects with complex dependencies.
 
 - Display a diagram showing the filenames of the source and destination when go to a declaration or usage.
