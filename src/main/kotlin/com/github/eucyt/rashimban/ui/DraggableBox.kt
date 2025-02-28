@@ -24,7 +24,7 @@ class DraggableBox(
 
     init {
         layout = BorderLayout()
-        border = BorderFactory.createLineBorder(JBColor.DARK_GRAY)
+        border = BorderFactory.createLineBorder(JBColor.DARK_GRAY, 1, true)
         val label = JLabel(text, SwingConstants.CENTER)
         label.border = BorderFactory.createEmptyBorder(PADDING_Y, PADDING_X, PADDING_Y, PADDING_X)
         add(label, BorderLayout.CENTER)
