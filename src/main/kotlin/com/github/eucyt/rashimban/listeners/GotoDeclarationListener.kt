@@ -1,6 +1,5 @@
 package com.github.eucyt.rashimban.listeners
 
-import com.github.eucyt.rashimban.canvas.components.FileNodeManager
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -15,8 +14,7 @@ private const val JUMP_TIMEOUT_MS = 5_000
 
 // This listener should subscribe to AnActionListener.TOPIC and FileEditorManagerListener.FILE_EDITOR_MANAGER
 class GotoDeclarationListener(
-    private val fileNodeManager: FileNodeManager,
-    private val onGotoDeclaration: () -> Unit,
+    private val codeJumpCallback: (from: VirtualFile, to: VirtualFile) -> Unit,
 ) : AnActionListener,
     FileEditorManagerListener {
     private var isJumping = false
@@ -52,8 +50,7 @@ class GotoDeclarationListener(
         // or if there were multiple declarations or usages, making it unable to correctly identify the targetFile.
         if (targetFile == latestSourceFile) return
 
-        fileNodeManager.add(latestSourceFile!!, targetFile)
-        onGotoDeclaration()
+        codeJumpCallback(latestSourceFile!!, targetFile)
         isJumping = false
     }
 
@@ -83,8 +80,7 @@ class GotoDeclarationListener(
             return
         }
 
-        fileNodeManager.add(latestSourceFile!!, newFile)
-        onGotoDeclaration()
+        codeJumpCallback(latestSourceFile!!, newFile)
         isJumping = false
     }
 }

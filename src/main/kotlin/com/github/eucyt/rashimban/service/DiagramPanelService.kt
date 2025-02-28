@@ -1,0 +1,81 @@
+package com.github.eucyt.rashimban.service
+
+import com.github.eucyt.rashimban.listeners.GotoDeclarationListener
+import com.github.eucyt.rashimban.ui.DiagramPanel
+import com.github.eucyt.rashimban.ui.DraggableBox
+import com.intellij.openapi.actionSystem.ex.AnActionListener
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.FileEditorManagerListener
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
+import java.awt.event.MouseEvent
+import java.util.UUID
+
+private const val CONNECTED_NODES_INITIAL_DISTANCE_X = 0
+private const val CONNECTED_NODES_INITIAL_DISTANCE_Y = 50
+private const val INITIAL_X = 200
+private const val INITIAL_Y = 50
+
+class DiagramPanelService(
+    private val project: Project,
+    private val diagramPanel: DiagramPanel,
+) {
+    private val files: MutableMap<UUID, VirtualFile> = mutableMapOf()
+
+    init {
+        // Set listener adding node by code jump
+        val connection = project.messageBus.connect()
+        val gotoDeclarationListener = GotoDeclarationListener { from, to -> addRelation(from, to) }
+        connection.subscribe(AnActionListener.TOPIC, gotoDeclarationListener)
+        connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, gotoDeclarationListener)
+    }
+
+    private fun addRelation(
+        from: VirtualFile,
+        to: VirtualFile,
+    ) {
+        val fromDraggableBox = addFileDraggableBox(from)
+        val toDraggableBox =
+            addFileDraggableBox(
+                to,
+                fromDraggableBox.x + CONNECTED_NODES_INITIAL_DISTANCE_X,
+                fromDraggableBox.y + CONNECTED_NODES_INITIAL_DISTANCE_Y,
+            )
+        diagramPanel.addConnection(fromDraggableBox.id, toDraggableBox.id)
+    }
+
+    private fun openFile(boxId: UUID) {
+        val filepath = files[boxId]?.path ?: return
+        val file = LocalFileSystem.getInstance().findFileByPath(filepath) ?: return
+        FileEditorManager.getInstance(project).openFile(file, true)
+    }
+
+    private fun removeFileInDiagram(boxId: UUID) {
+        diagramPanel.removeDraggableBox(boxId)
+        files.remove(boxId)
+    }
+
+    private fun addFileDraggableBox(
+        virtualFile: VirtualFile,
+        x: Int = INITIAL_X,
+        y: Int = INITIAL_Y,
+    ): DraggableBox {
+        val boxId =
+            getBoxId(virtualFile)
+                ?: UUID.randomUUID().also {
+                    diagramPanel.addDraggableBox(it, virtualFile.name, x, y) { e: MouseEvent? ->
+                        if (e?.button == MouseEvent.BUTTON1) {
+                            openFile(it)
+                        } else if (e?.button == MouseEvent.BUTTON3) {
+                            removeFileInDiagram(it)
+                        }
+                    }
+                    files[it] = virtualFile
+                }
+        return diagramPanel.getDraggableBox(boxId)
+            ?: throw IllegalStateException("Inconsistency detected between DiagramPanelService and DiagramPanel.")
+    }
+
+    private fun getBoxId(virtualFile: VirtualFile): UUID? = files.filter { it.value.url == virtualFile.url }.keys.firstOrNull()
+}
