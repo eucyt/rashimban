@@ -1,5 +1,6 @@
 package com.github.eucyt.rashimban.service
 
+import com.github.eucyt.rashimban.listeners.CurrentFileChangeListener
 import com.github.eucyt.rashimban.listeners.GotoDeclarationListener
 import com.github.eucyt.rashimban.ui.DiagramPanel
 import com.github.eucyt.rashimban.ui.DraggableBox
@@ -26,9 +27,13 @@ class DiagramPanelService(
     init {
         // Set listener adding node by code jump
         val connection = project.messageBus.connect()
+
         val gotoDeclarationListener = GotoDeclarationListener { from, to -> addRelation(from, to) }
         connection.subscribe(AnActionListener.TOPIC, gotoDeclarationListener)
         connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, gotoDeclarationListener)
+
+        val openFileListener = CurrentFileChangeListener { virtualFile -> onCurrentFileChanged(virtualFile) }
+        connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, openFileListener)
     }
 
     private fun addRelation(
@@ -75,6 +80,11 @@ class DiagramPanelService(
                 }
         return diagramPanel.getDraggableBox(boxId)
             ?: throw IllegalStateException("Inconsistency detected between DiagramPanelService and DiagramPanel.")
+    }
+
+    private fun onCurrentFileChanged(file: VirtualFile) {
+        val boxId = getBoxId(file) ?: return
+        diagramPanel.setHighlightUniquely(boxId)
     }
 
     private fun getBoxId(virtualFile: VirtualFile): UUID? = files.filter { it.value.url == virtualFile.url }.keys.firstOrNull()

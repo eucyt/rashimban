@@ -44,6 +44,11 @@ class DiagramPanel : JPanel() {
         connections.add(Pair(fromBoxId, toBoxId))
     }
 
+    fun setHighlightUniquely(boxId: UUID) {
+        components.filterIsInstance<DraggableBox>().forEach { it.setHighlight(false) }
+        getDraggableBox(boxId)?.setHighlight(true)
+    }
+
     override fun paintComponent(g: Graphics) {
         // paint connections
         super.paintComponent(g)
