@@ -6,6 +6,10 @@
 
 ### Added
 
+## 0.2.0
+
+- Fix design and use java swing for UI
+
 ## 0.1.0
 
 ### Added
