@@ -34,8 +34,9 @@ class DraggableBox(
         addMouseListener(
             object : MouseAdapter() {
                 override fun mousePressed(e: MouseEvent) {
-                    offsetX = e.getX()
-                    offsetY = e.getY()
+                    super.mousePressed(e)
+                    offsetX = e.x
+                    offsetY = e.y
                 }
 
                 override fun mouseClicked(e: MouseEvent?) {
@@ -48,8 +49,10 @@ class DraggableBox(
         addMouseMotionListener(
             object : MouseAdapter() {
                 override fun mouseDragged(e: MouseEvent) {
+                    super.mouseDragged(e)
+
                     val p: Point = location
-                    setLocation(p.x + e.getX() - offsetX, p.y + e.getY() - offsetY)
+                    setLocation(p.x + e.x - offsetX, p.y + e.y - offsetY)
                     parent.repaint()
                 }
             },

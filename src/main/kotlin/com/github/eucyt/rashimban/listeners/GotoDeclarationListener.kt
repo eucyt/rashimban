@@ -14,7 +14,7 @@ private const val JUMP_TIMEOUT_MS = 5_000
 
 // This listener should subscribe to AnActionListener.TOPIC and FileEditorManagerListener.FILE_EDITOR_MANAGER
 class GotoDeclarationListener(
-    private val addRelations: (VirtualFile, VirtualFile) -> Unit,
+    private val codeJumpCallback: (from: VirtualFile, to: VirtualFile) -> Unit,
 ) : AnActionListener,
     FileEditorManagerListener {
     private var isJumping = false
@@ -50,7 +50,7 @@ class GotoDeclarationListener(
         // or if there were multiple declarations or usages, making it unable to correctly identify the targetFile.
         if (targetFile == latestSourceFile) return
 
-        addRelations(latestSourceFile!!, targetFile)
+        codeJumpCallback(latestSourceFile!!, targetFile)
         isJumping = false
     }
 
@@ -80,7 +80,7 @@ class GotoDeclarationListener(
             return
         }
 
-        addRelations(latestSourceFile!!, newFile)
+        codeJumpCallback(latestSourceFile!!, newFile)
         isJumping = false
     }
 }

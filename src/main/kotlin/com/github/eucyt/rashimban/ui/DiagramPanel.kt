@@ -5,10 +5,8 @@ import java.awt.Graphics
 import java.awt.event.MouseEvent
 import java.util.UUID
 import javax.swing.JPanel
-import kotlin.collections.ArrayList
 
 class DiagramPanel : JPanel() {
-    private val boxes: MutableList<DraggableBox> = ArrayList()
     private val connections: MutableSet<Pair<UUID, UUID>> = mutableSetOf()
 
     init {
@@ -16,43 +14,45 @@ class DiagramPanel : JPanel() {
         background = Gray._40
     }
 
+    fun getDraggableBox(boxId: UUID): DraggableBox? = components.filterIsInstance<DraggableBox>().find { it.id == boxId }
+
     fun addDraggableBox(
-        id: UUID,
+        boxId: UUID,
         text: String,
         x: Int,
         y: Int,
         onClicked: ((e: MouseEvent?) -> Unit),
-    ) {
-        val box = DraggableBox(id, text, onClicked)
+    ): DraggableBox {
+        val box = DraggableBox(boxId, text, onClicked)
         box.setLocation(x, y)
-        boxes.add(box)
         add(box)
+        return box
     }
 
     fun removeDraggableBox(boxId: UUID) {
-        val box = boxes.find { it.id == boxId }
-        remove(box)
-        boxes.remove(box)
+        remove(getDraggableBox(boxId))
         connections.removeIf { it.first == boxId || it.second == boxId }
         repaint()
     }
 
     fun addConnection(
-        from: UUID,
-        to: UUID,
+        fromBoxId: UUID,
+        toBoxId: UUID,
     ) {
-        connections.add(Pair(from, to))
+        require(getDraggableBox(fromBoxId) != null) { "The draggable box must be exist: boxId=$fromBoxId" }
+        require(getDraggableBox(toBoxId) != null) { "The draggable box must be exist: boxId=$toBoxId" }
+        connections.add(Pair(fromBoxId, toBoxId))
     }
 
     override fun paintComponent(g: Graphics) {
+        // paint connections
         super.paintComponent(g)
         g.color = Gray._255
         for (conn in connections) {
-            val first = boxes.find { it.id == conn.first }
-            val second = boxes.find { it.id == conn.second }
-            if (first == null || second == null) {
-                continue
-            }
+            val first = getDraggableBox(conn.first)
+            val second = getDraggableBox(conn.second)
+            require(first != null) { "The draggable box must be exist: boxId=${conn.first}" }
+            require(second != null) { "The draggable box must be exist: boxId=${conn.second}" }
             g.drawLine(first.x + first.width / 2, first.y + first.height / 2, second.x + second.width / 2, second.y + second.height / 2)
         }
     }
