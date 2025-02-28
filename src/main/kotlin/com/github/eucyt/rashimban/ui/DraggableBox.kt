@@ -13,6 +13,8 @@ import javax.swing.SwingConstants
 
 private const val PADDING_X = 5
 private const val PADDING_Y = 5
+private val DEFAULT_COLOR = JBColor.DARK_GRAY
+private val HIGHLIGHT_COLOR = JBColor.GRAY
 
 class DraggableBox(
     val id: UUID,
@@ -24,7 +26,7 @@ class DraggableBox(
 
     init {
         layout = BorderLayout()
-        border = BorderFactory.createLineBorder(JBColor.DARK_GRAY, 1, true)
+        border = BorderFactory.createLineBorder(DEFAULT_COLOR, 1, true)
         val label = JLabel(text, SwingConstants.CENTER)
         label.border = BorderFactory.createEmptyBorder(PADDING_Y, PADDING_X, PADDING_Y, PADDING_X)
         add(label, BorderLayout.CENTER)
@@ -57,5 +59,18 @@ class DraggableBox(
                 }
             },
         )
+    }
+
+    fun setHighlight(isHighlight: Boolean) {
+        border =
+            BorderFactory.createLineBorder(
+                if (isHighlight) {
+                    HIGHLIGHT_COLOR
+                } else {
+                    DEFAULT_COLOR
+                },
+                1,
+                true,
+            )
     }
 }
