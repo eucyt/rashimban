@@ -53,12 +53,19 @@ class DiagramPanel : JPanel() {
         // paint connections
         super.paintComponent(g)
         g.color = Gray._255
+
+        // Enable antialiasing for smoother lines
+        val g2d = g.create() as java.awt.Graphics2D
+        g2d.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON)
+        g2d.setRenderingHint(java.awt.RenderingHints.KEY_RENDERING, java.awt.RenderingHints.VALUE_RENDER_QUALITY)
+
         for (conn in connections) {
             val first = getDraggableBox(conn.first)
             val second = getDraggableBox(conn.second)
             require(first != null) { "The draggable box must be exist: boxId=${conn.first}" }
             require(second != null) { "The draggable box must be exist: boxId=${conn.second}" }
-            g.drawLine(first.x + first.width / 2, first.y + first.height / 2, second.x + second.width / 2, second.y + second.height / 2)
+            g2d.drawLine(first.x + first.width / 2, first.y + first.height / 2, second.x + second.width / 2, second.y + second.height / 2)
         }
+        g2d.dispose()
     }
 }
