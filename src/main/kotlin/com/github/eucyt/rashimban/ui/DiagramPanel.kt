@@ -9,8 +9,8 @@ import javax.swing.JPanel
 
 class DiagramPanel : JPanel() {
     private val connections: MutableSet<Pair<UUID, UUID>> = mutableSetOf()
-    private var lastX = 0
-    private var lastY = 0
+    private var previousX = 0
+    private var previousY = 0
 
     init {
         layout = null
@@ -20,8 +20,8 @@ class DiagramPanel : JPanel() {
             object : MouseAdapter() {
                 override fun mousePressed(e: MouseEvent) {
                     super.mousePressed(e)
-                    lastX = e.x
-                    lastY = e.y
+                    previousX = e.x
+                    previousY = e.y
                 }
             },
         )
@@ -31,10 +31,10 @@ class DiagramPanel : JPanel() {
                 override fun mouseDragged(e: MouseEvent) {
                     super.mouseDragged(e)
 
-                    val dx = e.x - lastX
-                    val dy = e.y - lastY
-                    lastX = e.x
-                    lastY = e.y
+                    val dx = e.x - previousX
+                    val dy = e.y - previousY
+                    previousX = e.x
+                    previousY = e.y
 
                     // Move all components if panel is dragged
                     components.forEach {
