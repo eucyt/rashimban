@@ -18,9 +18,11 @@ private const val SCALE_FACTOR_PER_FRAME = 0.025f
 class DiagramPanel : JPanel() {
     var scale = 1.0
     private val connections: MutableSet<Pair<UUID, UUID>> = mutableSetOf()
-    private var lastX = 0
-    private var lastY = 0
+    private var previousX = 0
+    private var previousY = 0
     private val baseFont: Font = UIManager.getFont("Label.font")
+    private var previousX = 0
+    private var previousY = 0
 
     init {
         layout = null
@@ -30,8 +32,8 @@ class DiagramPanel : JPanel() {
             object : MouseAdapter() {
                 override fun mousePressed(e: MouseEvent) {
                     super.mousePressed(e)
-                    lastX = e.x
-                    lastY = e.y
+                    previousX = e.x
+                    previousY = e.y
                 }
             },
         )
@@ -41,10 +43,10 @@ class DiagramPanel : JPanel() {
                 override fun mouseDragged(e: MouseEvent) {
                     super.mouseDragged(e)
 
-                    val dx = e.x - lastX
-                    val dy = e.y - lastY
-                    lastX = e.x
-                    lastY = e.y
+                    val dx = e.x - previousX
+                    val dy = e.y - previousY
+                    previousX = e.x
+                    previousY = e.y
 
                     // Move all components if panel is dragged
                     components.forEach {
@@ -108,15 +110,15 @@ class DiagramPanel : JPanel() {
     }
 
     override fun paintComponent(g: Graphics) {
-        // paint connections
         super.paintComponent(g)
-        g.color = Gray._255
 
         // Enable antialiasing for smoother lines
         val g2d = g.create() as java.awt.Graphics2D
         g2d.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON)
         g2d.setRenderingHint(java.awt.RenderingHints.KEY_RENDERING, java.awt.RenderingHints.VALUE_RENDER_QUALITY)
 
+        // paint connections
+        g2d.color = Gray._255
         for (conn in connections) {
             val first = getDraggableBox(conn.first)
             val second = getDraggableBox(conn.second)
