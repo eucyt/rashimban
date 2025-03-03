@@ -2,13 +2,11 @@ package com.github.eucyt.rashimban.ui
 
 import com.intellij.ui.JBColor
 import java.awt.BorderLayout
-import java.awt.Point
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.util.UUID
 import javax.swing.BorderFactory
 import javax.swing.JLabel
-import javax.swing.JPanel
 import javax.swing.SwingConstants
 
 private const val PADDING_X = 5
@@ -20,7 +18,7 @@ class DraggableBox(
     val id: UUID,
     text: String?,
     onClicked: ((e: MouseEvent?) -> Unit) = { },
-) : JPanel() {
+) : JPanelForDouble() {
     private var offsetX = 0
     private var offsetY = 0
 
@@ -53,8 +51,7 @@ class DraggableBox(
                 override fun mouseDragged(e: MouseEvent) {
                     super.mouseDragged(e)
 
-                    val p: Point = location
-                    setLocation(p.x + e.x - offsetX, p.y + e.y - offsetY)
+                    setLocation(doubleX + e.x - offsetX, doubleY + e.y - offsetY)
                     parent.repaint()
                 }
             },
@@ -62,15 +59,8 @@ class DraggableBox(
     }
 
     fun setHighlight(isHighlight: Boolean) {
-        border =
-            BorderFactory.createLineBorder(
-                if (isHighlight) {
-                    HIGHLIGHT_COLOR
-                } else {
-                    DEFAULT_COLOR
-                },
-                1,
-                true,
-            )
+        val color = if (isHighlight) HIGHLIGHT_COLOR else DEFAULT_COLOR
+        border = BorderFactory.createLineBorder(color, 1, true)
+        (getComponent(0) as JLabel).foreground = color
     }
 }
