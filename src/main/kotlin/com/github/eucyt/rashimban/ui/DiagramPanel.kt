@@ -9,8 +9,6 @@ import javax.swing.JPanel
 
 class DiagramPanel : JPanel() {
     private val connections: MutableSet<Pair<UUID, UUID>> = mutableSetOf()
-    private var offsetX = 0
-    private var offsetY = 0
     private var lastX = 0
     private var lastY = 0
 
@@ -35,8 +33,6 @@ class DiagramPanel : JPanel() {
 
                     val dx = e.x - lastX
                     val dy = e.y - lastY
-                    offsetX += dx
-                    offsetY += dy
                     lastX = e.x
                     lastY = e.y
 
@@ -101,7 +97,8 @@ class DiagramPanel : JPanel() {
             val second = getDraggableBox(conn.second)
             require(first != null) { "The draggable box must be exist: boxId=${conn.first}" }
             require(second != null) { "The draggable box must be exist: boxId=${conn.second}" }
-            g.drawLine(first.x + first.width / 2, first.y + first.height / 2, second.x + second.width / 2, second.y + second.height / 2)
+            g2d.drawLine(first.x + first.width / 2, first.y + first.height / 2, second.x + second.width / 2, second.y + second.height / 2)
         }
+        g2d.dispose()
     }
 }
