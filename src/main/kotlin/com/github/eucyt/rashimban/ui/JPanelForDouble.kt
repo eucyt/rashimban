@@ -19,14 +19,7 @@ open class JPanelForDouble : JPanel() {
         get() = if (field == 0.0) super.getHeight().toDouble() else field
         private set
 
-    init {
-        doubleX = super.getX().toDouble()
-        doubleY = super.getY().toDouble()
-        doubleWidth = super.getWidth().toDouble()
-        doubleHeight = super.getHeight().toDouble()
-    }
-
-    // HACK: Prohibit some functions using Int to prevent rounding error
+    // HACK: Deprecated functions using Int to prevent rounding error
     @Deprecated("Use doubleX instead", ReplaceWith("doubleX"), level = DeprecationLevel.ERROR)
     override fun getX() = super.getX()
 
