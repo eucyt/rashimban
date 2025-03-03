@@ -45,10 +45,10 @@ class DiagramPanelService(
             addFileDraggableBox(
                 to,
             ) {
-                it.setRealLocation(
-                    fromDraggableBox.x + (fromDraggableBox.width - it.width) / 2 +
+                it.setLocation(
+                    fromDraggableBox.doubleX + (fromDraggableBox.doubleWidth - it.doubleWidth) / 2 +
                         CONNECTED_NODES_INITIAL_DISTANCE_X * diagramPanel.scale,
-                    fromDraggableBox.y + CONNECTED_NODES_INITIAL_DISTANCE_Y * diagramPanel.scale,
+                    fromDraggableBox.doubleY + CONNECTED_NODES_INITIAL_DISTANCE_Y * diagramPanel.scale,
                 )
             }
         diagramPanel.addConnection(fromDraggableBox.id, toDraggableBox.id)

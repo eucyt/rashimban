@@ -21,8 +21,6 @@ class DiagramPanel : JPanel() {
     private var previousX = 0
     private var previousY = 0
     private val baseFont: Font = UIManager.getFont("Label.font")
-    private var previousX = 0
-    private var previousY = 0
 
     init {
         layout = null
@@ -50,7 +48,11 @@ class DiagramPanel : JPanel() {
 
                     // Move all components if panel is dragged
                     components.forEach {
-                        it.setLocation(it.x + dx, it.y + dy)
+                        if (it is JPanelForDouble) {
+                            it.setLocation(it.doubleX + dx, it.doubleY + dy)
+                        } else {
+                            it.setLocation(it.x + dx, it.y + dy)
+                        }
                     }
 
                     repaint()
@@ -84,7 +86,7 @@ class DiagramPanel : JPanel() {
     ): DraggableBox {
         val box = DraggableBox(boxId, text, onClicked)
         applyScaleToDraggableBox(box, scale)
-        box.setRealLocation(x, y)
+        box.setLocation(x, y)
         add(box)
         return box
     }
@@ -124,7 +126,12 @@ class DiagramPanel : JPanel() {
             val second = getDraggableBox(conn.second)
             require(first != null) { "The draggable box must be exist: boxId=${conn.first}" }
             require(second != null) { "The draggable box must be exist: boxId=${conn.second}" }
-            g2d.drawLine(first.x + first.width / 2, first.y + first.height / 2, second.x + second.width / 2, second.y + second.height / 2)
+            g2d.drawLine(
+                (first.doubleX + first.doubleWidth / 2).toInt(),
+                (first.doubleY + first.doubleHeight / 2).toInt(),
+                (second.doubleX + second.doubleWidth / 2).toInt(),
+                (second.doubleY + second.doubleHeight / 2).toInt(),
+            )
         }
         g2d.dispose()
     }
@@ -133,12 +140,11 @@ class DiagramPanel : JPanel() {
         box: DraggableBox,
         scaleRatio: Double,
     ) {
-        val bounds = box.getRealBounds()
-        val newX = (bounds.x * scaleRatio)
-        val newY = (bounds.y * scaleRatio)
-        val newWidth = (bounds.width * scaleRatio)
-        val newHeight = (bounds.height * scaleRatio)
-        box.setRealBounds(newX, newY, newWidth, newHeight)
-        box.components.filter { it is JLabel }.forEach { it.font = it.font.deriveFont((baseFont.size * scale).toFloat()) }
+        val newX = (box.doubleX * scaleRatio)
+        val newY = (box.doubleY * scaleRatio)
+        val newWidth = (box.doubleWidth * scaleRatio)
+        val newHeight = (box.doubleHeight * scaleRatio)
+        box.setBounds(newX, newY, newWidth, newHeight)
+        box.components.filterIsInstance<JLabel>().forEach { it.font = it.font.deriveFont((baseFont.size * scale).toFloat()) }
     }
 }
