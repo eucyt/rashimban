@@ -15,8 +15,8 @@ import java.util.UUID
 
 private const val CONNECTED_NODES_INITIAL_DISTANCE_X = 0
 private const val CONNECTED_NODES_INITIAL_DISTANCE_Y = 50
-private const val INITIAL_X = 200
-private const val INITIAL_Y = 50
+private const val INITIAL_X = 200.0
+private const val INITIAL_Y = 50.0
 
 class DiagramPanelService(
     private val project: Project,
@@ -44,9 +44,13 @@ class DiagramPanelService(
         val toDraggableBox =
             addFileDraggableBox(
                 to,
-                fromDraggableBox.x + CONNECTED_NODES_INITIAL_DISTANCE_X,
-                fromDraggableBox.y + CONNECTED_NODES_INITIAL_DISTANCE_Y,
-            )
+            ) {
+                it.setRealLocation(
+                    fromDraggableBox.x + (fromDraggableBox.width - it.width) / 2 +
+                        CONNECTED_NODES_INITIAL_DISTANCE_X * diagramPanel.scale,
+                    fromDraggableBox.y + CONNECTED_NODES_INITIAL_DISTANCE_Y * diagramPanel.scale,
+                )
+            }
         diagramPanel.addConnection(fromDraggableBox.id, toDraggableBox.id)
     }
 
@@ -63,19 +67,19 @@ class DiagramPanelService(
 
     private fun addFileDraggableBox(
         virtualFile: VirtualFile,
-        x: Int = INITIAL_X,
-        y: Int = INITIAL_Y,
+        onCleated: (DraggableBox) -> Unit = {},
     ): DraggableBox {
         val boxId =
             getBoxId(virtualFile)
                 ?: UUID.randomUUID().also {
-                    diagramPanel.addDraggableBox(it, virtualFile.name, x, y) { e: MouseEvent? ->
-                        if (e?.button == MouseEvent.BUTTON1) {
-                            openFile(it)
-                        } else if (e?.button == MouseEvent.BUTTON3) {
-                            removeFileInDiagram(it)
-                        }
-                    }
+                    diagramPanel
+                        .addDraggableBox(it, virtualFile.name, INITIAL_X, INITIAL_Y) { e: MouseEvent? ->
+                            if (e?.button == MouseEvent.BUTTON1) {
+                                openFile(it)
+                            } else if (e?.button == MouseEvent.BUTTON3) {
+                                removeFileInDiagram(it)
+                            }
+                        }.also(onCleated)
                     files[it] = virtualFile
                 }
         return diagramPanel.getDraggableBox(boxId)
