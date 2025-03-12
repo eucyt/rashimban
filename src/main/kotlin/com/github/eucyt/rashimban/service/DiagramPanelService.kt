@@ -24,6 +24,16 @@ class DiagramPanelService(
 ) {
     private val files: MutableMap<UUID, VirtualFile> = mutableMapOf()
 
+    fun clearAllFiles() {
+        // Make a copy of the keys to avoid concurrent modification
+        val boxIds = files.keys.toList()
+        boxIds.forEach { boxId ->
+            diagramPanel.removeDraggableBox(boxId)
+        }
+        files.clear()
+        diagramPanel.repaint()
+    }
+
     init {
         // Set listener adding node by code jump
         val connection = project.messageBus.connect()
