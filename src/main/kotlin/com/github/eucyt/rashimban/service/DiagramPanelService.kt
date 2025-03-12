@@ -26,6 +26,8 @@ class DiagramPanelService(
     private val files: MutableMap<UUID, VirtualFile> = mutableMapOf()
 
     fun clearAllFiles() {
+        if (files.isEmpty()) return
+
         val confirmResult =
             Messages.showYesNoDialog(
                 "Are you sure you want to clear all files from the diagram?",
