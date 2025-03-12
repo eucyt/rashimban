@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.ex.AnActionListener
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import java.awt.event.MouseEvent
@@ -25,6 +26,17 @@ class DiagramPanelService(
     private val files: MutableMap<UUID, VirtualFile> = mutableMapOf()
 
     fun clearAllFiles() {
+        val confirmResult =
+            Messages.showYesNoDialog(
+                "Are you sure you want to clear all files from the diagram?",
+                "Clear All Files",
+                "Yes",
+                "No",
+                Messages.getQuestionIcon(),
+            )
+
+        if (confirmResult == Messages.NO) return
+
         // Make a copy of the keys to avoid concurrent modification
         val boxIds = files.keys.toList()
         boxIds.forEach { boxId ->
