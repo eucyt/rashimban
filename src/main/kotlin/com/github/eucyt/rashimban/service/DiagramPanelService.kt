@@ -1,7 +1,7 @@
 package com.github.eucyt.rashimban.service
 
+import com.github.eucyt.rashimban.listeners.CodeJumpListener
 import com.github.eucyt.rashimban.listeners.CurrentFileChangeListener
-import com.github.eucyt.rashimban.listeners.GotoDeclarationListener
 import com.github.eucyt.rashimban.ui.DiagramPanel
 import com.github.eucyt.rashimban.ui.DraggableBox
 import com.intellij.openapi.actionSystem.ex.AnActionListener
@@ -53,9 +53,9 @@ class DiagramPanelService(
         // Set listener adding node by code jump
         val connection = project.messageBus.connect()
 
-        val gotoDeclarationListener = GotoDeclarationListener { from, to -> addRelation(from, to) }
-        connection.subscribe(AnActionListener.TOPIC, gotoDeclarationListener)
-        connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, gotoDeclarationListener)
+        val codeJumpListener = CodeJumpListener { from, to -> addRelation(from, to) }
+        connection.subscribe(AnActionListener.TOPIC, codeJumpListener)
+        connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, codeJumpListener)
 
         val openFileListener = CurrentFileChangeListener { virtualFile -> onCurrentFileChanged(virtualFile) }
         connection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, openFileListener)

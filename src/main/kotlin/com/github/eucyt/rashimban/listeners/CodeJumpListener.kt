@@ -1,6 +1,7 @@
 package com.github.eucyt.rashimban.listeners
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
+import com.intellij.codeInsight.navigation.actions.GotoImplementationAction
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.AnActionResult
@@ -13,13 +14,13 @@ import com.intellij.openapi.vfs.VirtualFile
 private const val JUMP_TIMEOUT_MS = 5_000
 
 // This listener should subscribe to AnActionListener.TOPIC and FileEditorManagerListener.FILE_EDITOR_MANAGER
-class GotoDeclarationListener(
+class CodeJumpListener(
     private val codeJumpCallback: (from: VirtualFile, to: VirtualFile) -> Unit,
 ) : AnActionListener,
     FileEditorManagerListener {
     private var isJumping = false
     private var latestSourceFile: VirtualFile? = null
-    private var latestGotoDeclarationActionAt: Long = 0
+    private var latestGotoActionAt: Long = 0
 
     override fun beforeActionPerformed(
         action: AnAction,
@@ -28,11 +29,11 @@ class GotoDeclarationListener(
         super.beforeActionPerformed(action, event)
 
         isJumping = false
-        if (action !is GotoDeclarationAction) return
+        if (action !is GotoDeclarationAction && action !is GotoImplementationAction) return
 
         isJumping = true
         latestSourceFile = event.getData(CommonDataKeys.VIRTUAL_FILE)
-        latestGotoDeclarationActionAt = System.currentTimeMillis()
+        latestGotoActionAt = System.currentTimeMillis()
     }
 
     override fun afterActionPerformed(
@@ -42,6 +43,8 @@ class GotoDeclarationListener(
     ) {
         super.afterActionPerformed(action, event, result)
 
+        // For GotoImplementationAction with multiple implementations, we'll wait for selectionChanged
+        // instead of handling it here, as the targetFile here points to the interface, not the implementation
         if (action !is GotoDeclarationAction) return
 
         val targetFile = event.getData(CommonDataKeys.PSI_ELEMENT)?.containingFile?.virtualFile ?: return
@@ -55,7 +58,8 @@ class GotoDeclarationListener(
     }
 
     // If there are multiple declarations or usages, the targetFile cannot be obtained
-    // at the point of GotoDeclarationAction. Therefore, it is necessary to retrieve the file opened after the action.
+    // at the point of GotoDeclarationAction/GotoImplementationAction.
+    // Therefore, it is necessary to retrieve the file opened after the action.
     override fun selectionChanged(event: FileEditorManagerEvent) {
         super.selectionChanged(event)
 
@@ -75,7 +79,7 @@ class GotoDeclarationListener(
          * 1. Go to declarations or usages and cancel displayed popup menu. Or jump occurred within the same file.
          * 2. Open other file manually before going to other declarations or usages.
          */
-        if (System.currentTimeMillis() - latestGotoDeclarationActionAt > JUMP_TIMEOUT_MS) {
+        if (System.currentTimeMillis() - latestGotoActionAt > JUMP_TIMEOUT_MS) {
             isJumping = false
             return
         }
