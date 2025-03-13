@@ -37,6 +37,12 @@ class DraggableBox(
                     super.mousePressed(e)
                     offsetX = e.x
                     offsetY = e.y
+                    
+                    // Bring to foreground when pressed
+                    parent?.let {
+                        it.setComponentZOrder(this@DraggableBox, 0)
+                        it.repaint()
+                    }
                 }
 
                 override fun mouseClicked(e: MouseEvent?) {
