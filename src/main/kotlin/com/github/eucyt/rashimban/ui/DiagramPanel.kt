@@ -88,6 +88,11 @@ class DiagramPanel : JPanel() {
         applyScaleToDraggableBox(box, scale)
         box.setLocation(x, y)
         add(box)
+        
+        // Bring newly added box to the foreground
+        setComponentZOrder(box, 0)
+        repaint()
+        
         return box
     }
 
