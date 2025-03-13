@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+## [1.0.0]
+
+- Handle jumping implementations
+- New boxes will always appear in the foreground when added
+- Add button starting/stopping to add nodes in canvas
+- Add delete button
+
 ## [0.3.0]
 
 - Enable to move the diagram
@@ -35,7 +42,8 @@
 - Left-clicking a filename in diagram jumps to that file.
 - Right-clicking a filename in diagram removes it.
 
-[Unreleased]: https://github.com/eucyt/rashimban/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/eucyt/rashimban/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/eucyt/rashimban/compare/v0.3.0...v1.0.0
 [0.3.0]: https://github.com/eucyt/rashimban/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/eucyt/rashimban/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/eucyt/rashimban/compare/v0.0.1...v0.1.0
