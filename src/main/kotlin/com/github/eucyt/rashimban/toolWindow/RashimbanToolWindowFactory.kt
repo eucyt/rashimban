@@ -30,9 +30,19 @@ class RashimbanToolWindowFactory : ToolWindowFactory {
         val diagramPanel = DiagramPanel()
         val diagramPanelService = DiagramPanelService(project, diagramPanel)
 
-        val toolbar = ToolBar()
+        val toolbar = ToolBar(diagramPanelService.isFileAddingEnabled)
+
+        // Set up action handlers
         toolbar.setOnClearAllAction {
             diagramPanelService.clearAllFiles()
+        }
+
+        toolbar.setOnStartAction {
+            diagramPanelService.isFileAddingEnabled = true
+        }
+
+        toolbar.setOnStopAction {
+            diagramPanelService.isFileAddingEnabled = false
         }
 
         panel.add(toolbar.createComponent(), BorderLayout.NORTH)
