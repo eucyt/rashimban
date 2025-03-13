@@ -22,6 +22,7 @@ private const val INITIAL_Y = 50.0
 class DiagramPanelService(
     private val project: Project,
     private val diagramPanel: DiagramPanel,
+    var isFileAddingEnabled: Boolean = true,
 ) {
     private val files: MutableMap<UUID, VirtualFile> = mutableMapOf()
 
@@ -64,6 +65,8 @@ class DiagramPanelService(
         from: VirtualFile,
         to: VirtualFile,
     ) {
+        if (!isFileAddingEnabled) return
+
         val fromDraggableBox = addFileDraggableBox(from)
         val toDraggableBox =
             addFileDraggableBox(
