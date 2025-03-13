@@ -1,5 +1,7 @@
 # Rashimban
 
+<img width="748" alt="image" src="https://github.com/user-attachments/assets/aec4744e-3963-4a63-a372-917e17ee25f0" />
+
 ![Build](https://github.com/eucyt/rashimban/workflows/Build/badge.svg)
 [![Version](https://img.shields.io/jetbrains/plugin/v/26256.svg)](https://plugins.jetbrains.com/plugin/26256)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/26256.svg)](https://plugins.jetbrains.com/plugin/26256)
@@ -11,9 +13,13 @@ This plugin visualizes your navigation between files when jumping through code.
 
 With this tool, you can easily track which file you came from and where you are now, even in projects with complex dependencies.
 
-- Display a diagram showing the filenames of the source and destination when go to a declaration or usage.
+- Display a diagram showing the filenames of the source and destination when go to a declaration, implementation or usage.
 - Left-clicking a filename in diagram jumps to that file.
 - Right-clicking a filename in diagram removes it.
+- Drag the diagram to move it.
+- Zoom in and out the diagram with the mouse wheel.
+- Start/stop adding files in the diagram by the start/stop buttons.
+- Delete all files in the diagram by the delete button.
 <!-- Plugin description end -->
 
 ## Installation
