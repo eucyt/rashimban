@@ -116,6 +116,8 @@ class DiagramPanel : JPanel() {
         getDraggableBox(boxId)?.setHighlight(true)
     }
 
+    fun getConnections(): Set<Pair<UUID, UUID>> = connections.toSet()
+
     override fun paintComponent(g: Graphics) {
         super.paintComponent(g)
 

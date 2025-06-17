@@ -12,6 +12,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import java.awt.event.MouseEvent
+import java.io.File
 import java.util.UUID
 
 private const val CONNECTED_NODES_INITIAL_DISTANCE_X = 0
@@ -119,4 +120,78 @@ class DiagramPanelService(
     }
 
     private fun getBoxId(virtualFile: VirtualFile): UUID? = files.filter { it.value.url == virtualFile.url }.keys.firstOrNull()
+
+    fun exportAsMermaid() {
+        if (files.isEmpty()) {
+            Messages.showInfoMessage(
+                "No files in the diagram to export.",
+                "Export Diagram"
+            )
+            return
+        }
+
+        val mermaidContent = generateMermaidDiagram()
+        
+        // Show save dialog to user
+        val outputFile = File(project.basePath ?: System.getProperty("user.home"), "diagram.md")
+        
+        try {
+            outputFile.writeText(mermaidContent)
+            Messages.showInfoMessage(
+                "Diagram exported successfully to: ${outputFile.absolutePath}",
+                "Export Successful"
+            )
+        } catch (e: Exception) {
+            Messages.showErrorDialog(
+                "Failed to export diagram: ${e.message}",
+                "Export Failed"
+            )
+        }
+    }
+
+    private fun generateMermaidDiagram(): String {
+        val sb = StringBuilder()
+        sb.appendLine("# Diagram")
+        sb.appendLine()
+        sb.appendLine("```mermaid")
+        sb.appendLine("graph TD")
+        
+        // Get all connections from the diagram panel
+        val connectionSet = diagramPanel.getConnections()
+        
+        // Create node definitions with sanitized names
+        val nodeNames = mutableMapOf<UUID, String>()
+        val usedNames = mutableSetOf<String>()
+        files.forEach { (uuid, virtualFile) ->
+            var sanitizedName = sanitizeNodeName(virtualFile.name)
+            var counter = 1
+            while (usedNames.contains(sanitizedName)) {
+                sanitizedName = "${sanitizeNodeName(virtualFile.name)}_$counter"
+                counter++
+            }
+            usedNames.add(sanitizedName)
+            nodeNames[uuid] = sanitizedName
+            sb.appendLine("    $sanitizedName[\"${virtualFile.name}\"]")
+        }
+        
+        // Add connections
+        connectionSet.forEach { (fromId, toId) ->
+            val fromName = nodeNames[fromId]
+            val toName = nodeNames[toId]
+            if (fromName != null && toName != null) {
+                sb.appendLine("    $fromName --> $toName")
+            }
+        }
+        
+        sb.appendLine("```")
+        return sb.toString()
+    }
+
+    private fun sanitizeNodeName(fileName: String): String {
+        // Remove file extension and sanitize for Mermaid
+        val nameWithoutExt = fileName.substringBeforeLast('.')
+        return nameWithoutExt
+            .replace("[^a-zA-Z0-9_]".toRegex(), "_")
+            .let { if (it.isEmpty()) "node" else it }
+    }
 }

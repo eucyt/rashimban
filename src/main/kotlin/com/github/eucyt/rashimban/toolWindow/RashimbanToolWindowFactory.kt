@@ -45,6 +45,10 @@ class RashimbanToolWindowFactory : ToolWindowFactory {
             diagramPanelService.isFileAddingEnabled = false
         }
 
+        toolbar.setOnExportAction {
+            diagramPanelService.exportAsMermaid()
+        }
+
         panel.add(toolbar.createComponent(), BorderLayout.NORTH)
         panel.add(JBScrollPane(diagramPanel), BorderLayout.CENTER)
 

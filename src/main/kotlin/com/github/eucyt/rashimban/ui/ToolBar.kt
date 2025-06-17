@@ -20,6 +20,7 @@ class ToolBar(
     private var onClearAllAction: () -> Unit = {}
     private var onStartAction: () -> Unit = {}
     private var onStopAction: () -> Unit = {}
+    private var onExportAction: () -> Unit = {}
 
     /**
      * Set handler for the clear all action
@@ -40,6 +41,13 @@ class ToolBar(
      */
     fun setOnStopAction(handler: () -> Unit) {
         onStopAction = handler
+    }
+
+    /**
+     * Set handler for the export action
+     */
+    fun setOnExportAction(handler: () -> Unit) {
+        onExportAction = handler
     }
 
     /**
@@ -94,7 +102,7 @@ class ToolBar(
         val recordingToolbar = ActionManager.getInstance().createActionToolbar("RashimbanControlToolbar", recordingActionGroup, true)
 
         // Create action toolbar for delete button
-        val deleteActionGroup = DefaultActionGroup()
+        val rightActionGroup = DefaultActionGroup()
 
         val clearAllAction =
             object : AnAction("Clear All", "Clear all files from diagram", AllIcons.Actions.GC) {
@@ -105,18 +113,29 @@ class ToolBar(
                 override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
             }
 
-        deleteActionGroup.add(clearAllAction)
-        val deleteToolbar = ActionManager.getInstance().createActionToolbar("RashimbanDeleteToolbar", deleteActionGroup, true)
+        val exportAction =
+            object : AnAction("Export", "Export diagram as Mermaid", AllIcons.Actions.Download) {
+                override fun actionPerformed(e: AnActionEvent) {
+                    onExportAction()
+                }
 
-        // Create panel with both toolbars
+                override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.EDT
+            }
+
+        rightActionGroup.add(clearAllAction)
+        rightActionGroup.add(exportAction)
+
+        val rightToolbar = ActionManager.getInstance().createActionToolbar("RashimbanRightToolbar", rightActionGroup, true)
+
+        // Create panel with all toolbars
         val panel = JPanel(BorderLayout())
 
         // Set target components to avoid the warning
         recordingToolbar.targetComponent = panel
-        deleteToolbar.targetComponent = panel
+        rightToolbar.targetComponent = panel
 
         panel.add(recordingToolbar.component, BorderLayout.WEST)
-        panel.add(deleteToolbar.component, BorderLayout.EAST)
+        panel.add(rightToolbar.component, BorderLayout.EAST)
 
         return panel
     }
