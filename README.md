@@ -20,6 +20,7 @@ With this tool, you can easily track which file you came from and where you are 
 - Zoom in and out the diagram with the mouse wheel.
 - Start/stop adding files in the diagram by the start/stop buttons.
 - Delete all files in the diagram by the delete button.
+- Export mermaid markdown file.
 <!-- Plugin description end -->
 
 ## Installation

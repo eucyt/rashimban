@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+## [1.1.0]
+
+- Export mermaid
+
 ## [1.0.0]
 
 - Handle jumping implementations
@@ -42,7 +46,8 @@
 - Left-clicking a filename in diagram jumps to that file.
 - Right-clicking a filename in diagram removes it.
 
-[Unreleased]: https://github.com/eucyt/rashimban/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/eucyt/rashimban/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/eucyt/rashimban/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/eucyt/rashimban/compare/v0.3.0...v1.0.0
 [0.3.0]: https://github.com/eucyt/rashimban/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/eucyt/rashimban/compare/v0.1.0...v0.2.0
